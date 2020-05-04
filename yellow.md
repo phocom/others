@@ -1,3 +1,8 @@
+---
+layout: default
+title: AtCoder 黄色になりました
+---
+
 # AtCoder 黄色になりました
 
 ここに1人の競プロerがいます。レート推移を見てみましょう。
