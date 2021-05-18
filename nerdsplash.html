@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>nerd splash</title>
+	<style>
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			overflow: hidden;
+		}
+
+		#content {
+			margin: 0;
+			width: 100%;
+			height: 100%;
+			min-height: 100%;
+			background-color: #000000;
+			overflow: hidden;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="content">
+	</div>
+	<script type="text/javascript">
+		const nerds = ["nerd.png", "kimoi_nerd.png", "nerd_3.png", "nerd_5.png", "nerd_7.png", "nerd_8.png", "nerd_9.png"];
+		let boss = document.createElement('img');
+		boss.style.position = "absolute";
+		boss.src = "nerd.png";
+		boss.style["z-index"] = 2;
+		boss.style.cursor = "pointer";
+
+		document.getElementById("content").appendChild(boss);
+		let objects = [{ dom: boss, mov: false, s: 1, x: 0.5, y: 0.8, vx: 0, vy: 0, r: 0, vr: 25 }];
+
+		function rnd(n) { return Math.floor(Math.random() * n); }
+		function draw(obj) {
+			if (obj.mov) {
+				obj.vy += 1.5 / 50;
+			}
+			obj.x += obj.vx / 50;
+			obj.y += obj.vy / 50;
+			obj.r += obj.vr / 50;
+			if (obj.x < -0.1 || 1.1 < obj.x || 1.1 < obj.y) { obj.dom.parentNode.removeChild(obj.dom); }
+			obj.dom.style.top = `${obj.y * 100}%`
+			obj.dom.style.left = `${obj.x * 100}%`
+			obj.dom.style.transform = `translateY(-50%) translateX(-50%) rotateZ(${-obj.r}deg) scale(${obj.s},${obj.s})`;
+		}
+		boss.onclick = function () {
+			objects[0].vr += 300;
+			const n = 8 + rnd(16);
+			for (let i = 0; i < n; ++i) {
+				let dom = document.createElement('img');
+				dom.style.position = "absolute";
+				dom.src = type = nerds[rnd(nerds.length)];
+				dom.style["z-index"] = 0;
+				let newnerd = { dom: dom, mov: true, s: 0.3 + rnd(20) / 100, x: 0.5, y: 0.8, vx: (rnd(81) - 40) / 60, vy: (-10 - rnd(24)) / 15, r: rnd(360), vr: (rnd(201) - 100) };
+				draw(newnerd);
+				document.getElementById("content").appendChild(dom);
+				objects.push(newnerd);
+			}
+		};
+		function update() {
+			objects[0].vr = Math.max(objects[0].vr - Math.pow(objects[0].vr, 1.5) / 1000, 25);
+			objects.forEach(obj => {
+				draw(obj);
+			});
+			objects = objects.filter(obj => { return !(obj.x < -0.1 || 1.1 < obj.x || 1.1 < obj.y); });
+		};
+		setInterval(update, 20);
+	</script>
+</body>
+
+</html>
