@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>simple timing</title>
+  <style>
+    * {
+      margin: 4px;
+    }
+
+    #content {
+      text-align: center;
+    }
+
+    #content input {
+      font-size: 20px;
+    }
+
+    #res {
+      text-align: right;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="content">
+    334 Rankerに代表される競技時報からラグ読み等の要素を取り去り、限界まで抽象化したゲームです。<br>
+    pressボタンをクリックするかEnterキーを押すと押下時刻のミリ秒を確認できます。<br>
+    少し練習して慣れたら、run testボタンを押すとテストが始まります。<br>
+    10回押下し、ミリ秒の小さい3個の記録でスコアが得られます。<br>
+    （長いと疲れるのでとりあえずこの規模にしてます）
+    <h1 id="timeText"></h1>
+    <input type="button" id="press" value="press"><input type="text" id="res" size="8" readonly disabled><br>
+    <input type="button" id="run1" value="run test 3/10"><input type="button" id="run2" value="run test 10/30"><br>
+    <div id="result"></div>
+  </div>
+  <script type="text/javascript">
+    let running = 0;
+    let records = [];
+    const params = [[], [3, 10], [10, 30]];
+    function getScore() {
+      records = records.sort(function (a, b) {
+        return a - b
+      });
+      const point = records
+        .slice(0, params[running][0])
+        .map(x => 10000 * Math.pow(2, -10.0 * x / 1000))
+        .reduce(function (a, b) { return a + b; }) / params[running][0];
+      return point;
+    }
+    function press() {
+      const date = new Date();
+      const ms = date.getMilliseconds();
+      document.getElementById("res").value = ms + " ms";
+      if (running > 0) {
+        records.push(ms);
+        document.getElementById("result").innerHTML += ms + " ms<br>";
+        if (records.length < params[running][1]) {
+          document.getElementById("result").innerHTML += (records.length + 1) + "回目：";
+        } else {
+          const score = Math.round(getScore() * 100) / 100;
+          document.getElementById("result").innerHTML += "スコア：" + score;
+          document.getElementById("result").innerHTML += `<br><a href="https://twitter.com/intent/tweet?text=${encodeURIComponent("My score is " + score + ". (mode " + params[running][0] + "/" + params[running][1] + ") https://nenone.net/timing.html")}">tweet</a>`
+          running = 0;
+        }
+      }
+    }
+    document.getElementById("press").onclick = function () {
+      press();
+    };
+    document.body.addEventListener("keydown", event => {
+      if (event.key == "Enter") {
+        press();
+      }
+    });
+    function startTest(mode) {
+      running = mode;
+      records.splice(0);
+      document.getElementById("result").innerHTML = "1回目：";
+    }
+    document.getElementById("run1").onclick = function () {
+      startTest(1);
+      document.getElementById("run1").blur();
+    };
+    document.getElementById("run2").onclick = function () {
+      startTest(2);
+      document.getElementById("run2").blur();
+    };
+    let timeText = document.getElementById("timeText");
+    function getTimeText(t) {
+      let h = t.getHours();
+      let m = t.getMinutes();
+      let s = t.getSeconds();
+      let ms = t.getMilliseconds();
+      if (h < 10) h = "0" + h;
+      if (m < 10) m = "0" + m;
+      if (s < 10) s = "0" + s;
+      if (ms < 10) ms = "00" + ms;
+      else if (ms < 100) ms = "0" + ms;
+      return (h + ":" + m + ":" + s + "." + ms);
+    }
+    function draw() {
+      timeText.innerHTML = getTimeText(new Date());
+    }
+    setInterval(draw, 15);
+  </script>
+</body>
+
+</html>
