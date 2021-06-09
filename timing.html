@@ -61,7 +61,7 @@
         } else {
           const score = Math.round(getScore() * 100) / 100;
           document.getElementById("result").innerHTML += "スコア：" + score;
-          document.getElementById("result").innerHTML += `<br><a href="https://twitter.com/intent/tweet?text=${encodeURIComponent("My score is " + score + ". (mode " + params[running][0] + "/" + params[running][1] + ") https://nenone.net/timing.html")}">tweet</a>`
+          document.getElementById("result").innerHTML += `<br><a href="https://twitter.com/intent/tweet?text=${encodeURIComponent("My score is " + score + ". (mode " + params[running][0] + "/" + params[running][1] + ") https://phocom.github.io/others/timing")}">tweet</a>`
           running = 0;
         }
       }
