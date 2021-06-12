@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>MilliProfile</title>
+</head>
+
+<body>
+  <form target="dummy">
+    @<input type="text" id="screen_name"> <input type="submit" id="load" value="LOAD"><br>
+  </form>
+  <iframe name="dummy" style="width:0px;height:0px;border:0px;"></iframe>
+  <a class="twitter-timeline" href="https://twitter.com/_phocom?ref_src=twsrc%5Etfw"></a>
+  <script defer type="text/javascript">
+
+    document.getElementById("load").onclick = function () {
+      console.log(document.getElementById("screen_name").value);
+      location.href = "./milliprofile.html#" + document.getElementById("screen_name").value;
+      location.reload();
+    };
+
+    function update() {
+      let widget = document.getElementById("twitter-widget-0");
+
+      if (widget) {
+        let elms = widget.contentWindow.document.querySelectorAll("a");
+        if (elms.length > 0) {
+          elms.forEach(function (elm) {
+            let time = elm.querySelector("time");
+            if (time) {
+              let id = elm.href.split("/")[5];
+              time.innerHTML = formatDate(getDateFromSnowFrake(id));
+              time.style.fontSize = "32";
+            }
+          });
+        } else {
+          setTimeout(update, 100);
+        }
+      } else {
+        setTimeout(update, 100);
+      }
+    }
+    function getDateFromSnowFrake(id) {
+      if (id < 10000000000) return;
+      var unixTime = Math.floor(Number(id) / 4194304) + 1288834974657;
+      return new Date(unixTime);
+    }
+    function formatDate(date) {
+      return `${date.getMonth() + 1}月` +
+        `${date.getDate()}日 ` +
+        `${date.getHours().toString().padStart(2, '0')}:` +
+        `${date.getMinutes().toString().padStart(2, '0')}:` +
+        `${date.getSeconds().toString().padStart(2, '0')}.` +
+        `${date.getMilliseconds().toString().padStart(3, '0')} `
+    }
+
+    window.onload = function () {
+      let id = location.hash; console.log(id);
+      if (id.length > 0) {
+        document.getElementsByClassName("twitter-timeline")[0].href = `https://twitter.com/${id.substr(1)}?ref_src=twsrc%5Etfw`
+        let el = document.createElement("script");
+        el.src = "https://platform.twitter.com/widgets.js";
+        document.body.appendChild(el);
+        update();
+      }
+    };
+  </script>
+</body>
+
+</html>
