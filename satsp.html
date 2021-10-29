@@ -18,7 +18,7 @@
   遷移確率関数（diff:悪化分、T:1.0->0.0）<input type="text" id="afunc" width="200" value="Math.exp(diff/T/50)"><br>
   <input type="button" id="generate" value="generate"><input type="button" id="reset" value="reset"><input type="button"
     id="solve" value="solve"><br>
-  <canvas id="canvas" width="600" height="800"></canvas>
+  <canvas id="canvas" width="500" height="700"></canvas>
   <div id="res"></div>
   <script type="text/javascript">
     const canvas = document.querySelector("#canvas");
@@ -38,7 +38,7 @@
     function draw(st, num) {
       ctx.fillStyle = "white";
       ctx.beginPath();
-      ctx.rect(0, 200, 600, 800);
+      ctx.rect(0, 200, 500, 700);
       ctx.fill();
       for (let i = 0; i < n; ++i) {
         if (i == 0) {
@@ -65,8 +65,8 @@
       const score = calc_score();
       if (lastScore > 0) {
         ctx.beginPath();
-        ctx.moveTo((st - 1) / num * 600, 200 - lastScore / max * 200);
-        ctx.lineTo(st / num * 600, 200 - score / max * 200);
+        ctx.moveTo((st - 1) / num * 500, 200 - lastScore / max * 200);
+        ctx.lineTo(st / num * 500, 200 - score / max * 200);
         ctx.stroke();
       }
       lastScore = score;
@@ -111,7 +111,7 @@
       lastScore = -1;
       ctx.fillStyle = "white";
       ctx.beginPath();
-      ctx.rect(0, 0, 600, 800);
+      ctx.rect(0, 0, 500, 700);
       ctx.fill();
     }
 
@@ -121,7 +121,7 @@
       order = [...Array(n).keys()];
       lastScore = -1;
       for (let i = 0; i < n; ++i)
-        points.push([Math.random() * 570 + 10, Math.random() * 570 + 210]);
+        points.push([Math.random() * 470 + 10, Math.random() * 470 + 210]);
       clear();
       draw(0, Number(document.getElementById("num").value));
     }
