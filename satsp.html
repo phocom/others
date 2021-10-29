@@ -134,6 +134,7 @@
       draw(0, Number(document.getElementById("num").value));
     };
     document.getElementById("solve").onclick = () => {
+      clear();
       solve();
     }
     window.onload = generate;
