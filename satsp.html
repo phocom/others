@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>TSP SA Simulator</title>
+  <style>
+    * {
+      font-size: 16px;
+      margin: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  頂点数<input type="text" id="n" width="200" value="30"><br>
+  繰り返し回数<input type="text" id="num" width="200" value="1500"><br>
+  遷移確率関数（diff:悪化分、T:1.0->0.0）<input type="text" id="afunc" width="200" value="Math.exp(diff/T/50)"><br>
+  <input type="button" id="generate" value="generate"><input type="button" id="reset" value="reset"><input type="button"
+    id="solve" value="solve"><br>
+  <canvas id="canvas" width="600" height="800"></canvas>
+  <div id="res"></div>
+  <script type="text/javascript">
+    const canvas = document.querySelector("#canvas");
+    const ctx = canvas.getContext("2d");
+    let points = [];
+    let order = [];
+    let n = 0;
+    let lastScore = -1;
+    let max = -1;
+
+    function calc_score() {
+      return [...Array(n - 1).keys()].reduce((prev, i) =>
+        prev + Math.sqrt(Math.pow((points[order[i + 1]][0] - points[order[i]][0]), 2)
+          + Math.pow((points[order[i + 1]][1] - points[order[i]][1]), 2)), 0);
+    }
+
+    function draw(st, num) {
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      ctx.rect(0, 200, 600, 800);
+      ctx.fill();
+      for (let i = 0; i < n; ++i) {
+        if (i == 0) {
+          ctx.beginPath();
+          ctx.moveTo(points[order[0]][0], points[order[0]][1]);
+        } else {
+          ctx.lineTo(points[order[i]][0], points[order[i]][1]);
+          if (i == n - 1)
+            ctx.stroke();
+        }
+      }
+      for (let i = 0; i < n; ++i) {
+        ctx.beginPath();
+        ctx.fillStyle = "white";
+        ctx.arc(points[i][0], points[i][1], 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(points[i][0], points[i][1], 12, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.font = "14px sans-serif"
+        ctx.fillStyle = "black";
+        ctx.fillText(String(i), points[i][0] - 7, points[i][1] + 7);
+      }
+      const score = calc_score();
+      if (lastScore > 0) {
+        ctx.beginPath();
+        ctx.moveTo((st - 1) / num * 600, 200 - lastScore / max * 200);
+        ctx.lineTo(st / num * 600, 200 - score / max * 200);
+        ctx.stroke();
+      }
+      lastScore = score;
+      document.getElementById("res").innerHTML = `iteration: ${st}/${num}<br>score: ${score}`;
+    }
+
+    function solve() {
+      let st = 0;
+      const num = Number(document.getElementById("num").value);
+      const afunc = document.getElementById("afunc").value;
+      let score = calc_score();
+      max = score * 1.5;
+      draw(0, num);
+      function rev(l, r) {
+        for (let i = 0; i < (r - l) / 2; ++i)
+          [order[l + i], order[r - i]] = [order[r - i], order[l + i]];
+      }
+      function step() {
+        if (st < num) {
+          let l = Math.floor(Math.random() * (n - 1)) + 1, r = Math.floor(Math.random() * (n - 2)) + 1;
+          if (r >= l) r++;
+          if (l > r) [l, r] = [r, l];
+          rev(l, r);
+          if (score < calc_score()) {
+            const diff = score - calc_score();
+            const T = 1.0 * (num - st) / num;
+            if (Math.random() > eval(afunc)) {
+              rev(l, r);
+            } else score = calc_score();
+          } else {
+            score = calc_score();
+          }
+          draw(st + 1, num);
+          st += 1;
+          window.setTimeout(step, 10);
+        }
+      }
+      step(0);
+    }
+
+    function clear() {
+      lastScore = -1;
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      ctx.rect(0, 0, 600, 800);
+      ctx.fill();
+    }
+
+    function generate() {
+      n = Number(document.getElementById("n").value);
+      points = [];
+      order = [...Array(n).keys()];
+      lastScore = -1;
+      for (let i = 0; i < n; ++i)
+        points.push([Math.random() * 570 + 10, Math.random() * 570 + 210]);
+      clear();
+      draw(0, Number(document.getElementById("num").value));
+    }
+
+    document.getElementById("generate").onclick = generate;
+    document.getElementById("reset").onclick = () => {
+      order = [...Array(n).keys()];
+      lastScore = -1;
+      clear();
+      draw(0, Number(document.getElementById("num").value));
+    };
+    document.getElementById("solve").onclick = () => {
+      solve();
+    }
+    window.onload = generate;
+  </script>
+</body>
+
+</html>
