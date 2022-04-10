@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>wakame</title>
+  <style>
+    * {
+      margin: 4px;
+      line-height: 20px;
+    }
+
+    #content {
+      text-align: center;
+    }
+
+    #content input {
+      font-size: 20px;
+    }
+
+    #result {
+      width: 400px;
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="content">
+    長さ<input type="text" id="wakalen" size="3" value="10"><input type="button" id="generate" value="わかめ！">
+    <div id="result"></div>
+  </div>
+  <script type="text/javascript">
+    document.getElementById("generate").onclick = function () {
+      const wakalen = document.getElementById("wakalen").value;
+      let res = ["＼わかめ！／", "　(^｡^)"];
+      let pos = 1;
+      for (let i = 0; i < wakalen; ++i) {
+        const mov = Math.floor(Math.random() * 2) * 2 - 1;
+        if (pos == 0 && mov == -1) {
+          for (let j = 0; j < res.length; ++j)res[j] = "　" + res[j];
+          res.push("／　／");
+        } else {
+          let tmp = "";
+          for (let j = 0; j < pos - (mov == -1 ? 1 : 0); ++j)tmp += "　";
+          if (mov == -1) tmp += "／　／";
+          else tmp += "＼　＼";
+          pos += mov;
+          res.push(tmp);
+        }
+      }
+      res.push("　".repeat(pos) + "￣￣");
+      let str = res.join("<br>") + "<br>";
+      let tweettext = "." + res.join("\n") + "\n";
+      str += `<a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(tweettext + "\n#わかめ https://phocom.github.io/others/wakame")}">tweet</a>`;
+      document.getElementById("result").innerHTML = str;
+    };
+  </script>
+</body>
+
+</html>
