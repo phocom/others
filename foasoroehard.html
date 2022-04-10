@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+  <script type="text/javascript">
+    let nakaten = false;
+    const strs = ["フォア", "ゾ", "クラティカ", "ソクラティカ"];
+    const ans = "フォア・ゾ・クラティカ・ソクラティカ";
+    let buf = "";
+    while (1) {
+      if (nakaten == false) {
+        const t = Math.floor(Math.random() * 2);
+        if (t == 0) {
+          buf += "・";
+          nakaten = true;
+        } else {
+          const n = Math.floor(Math.random() * 4);
+          buf += strs[n];
+          nakaten = false;
+        }
+      } else {
+        const n = Math.floor(Math.random() * 4);
+        buf += strs[n];
+        nakaten = false;
+      }
+      if (buf.length > ans.length && buf.slice(-ans.length) == ans) break;
+    }
+    document.write(buf);
+    document.write("<br>" + buf.length + "文字目でフォア・ゾ・クラティカ・ソクラティカが完成しました！<br>");
+    document.write(`<a href="https://twitter.com/intent/tweet?text=${buf.length + encodeURIComponent("文字目でフォア・ゾ・クラティカ・ソクラティカが完成しました！\nhttps://phocom.github.io/others/foasoroehard.html")}">tweet</a>`);
+  </script>
+</body>
+
+</html>
